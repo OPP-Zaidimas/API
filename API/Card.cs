@@ -7,10 +7,10 @@ namespace API
 {
     public abstract class Card
     {
-        string name;
-        public Card(string Name)
+        public string name;
+        public string getName()
         {
-            name = Name;
+            return name;
         }
     }
 }

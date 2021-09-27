@@ -9,5 +9,13 @@ namespace API
     {
         string effect;
         int duration;
+
+        public ItemCard(string Name, string Effect, int Duration) 
+        {
+            name = Name;
+            effect = Effect;
+            duration = Duration;
+        
+        }
     }
 }

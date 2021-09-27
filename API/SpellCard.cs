@@ -8,5 +8,14 @@ namespace API
     public class SpellCard : Card
     {
         string effect;
+
+
+
+
+     public SpellCard(string Name, string Effect)
+     {
+         name = Name;
+         effect = Effect;
+     }
     }
 }
