@@ -7,7 +7,7 @@ namespace API
 {
     interface ICreator
     {
-        public Card factoryMethod(string type, string name)
+        public Card factoryMethod(string type)
         {
             return null;
         }

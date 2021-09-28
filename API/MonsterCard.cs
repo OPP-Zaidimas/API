@@ -8,13 +8,17 @@ namespace API
     public class MonsterCard : Card
     {
         int hitpoints;
+        private readonly string _name;
 
-
-
-     public MonsterCard(string Name, int Hitpoints)
+     public MonsterCard()
      {
-        name = Name;
-        hitpoints = Hitpoints;
+            _name = "Monster";
      }
+
+
+     public override string name
+        {
+            get { return _name; }
+        }
     }
 }

@@ -8,14 +8,17 @@ namespace API
     public class SpellCard : Card
     {
         string effect;
+        private readonly string _name;
+
+        public SpellCard()
+        {
+            _name = "Spell";
+        }
 
 
-
-
-     public SpellCard(string Name, string Effect)
-     {
-         name = Name;
-         effect = Effect;
-     }
+        public override string name
+        {
+            get { return _name; }
+        }
     }
 }

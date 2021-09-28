@@ -7,21 +7,21 @@ namespace API
 {
     public class CardCreator : ICreator
     {
-        public Card factoryMethod(string type, string name)
+        public Card factoryMethod(string type= "")
         {
             if (type.Equals("Spell"))
             {
-                return new SpellCard(name);
+                return new SpellCard();
             }
             if (type.Equals("Monster"))
             {
-                return new MonsterCard(name);
+                return new MonsterCard();
             }
             if (type.Equals("Item"))
             {
-                return new ItemCard(name);
+                return new ItemCard();
             }
-            else return null;
+            else return new MonsterCard();
             
         }
 
