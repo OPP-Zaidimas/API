@@ -9,18 +9,13 @@ namespace API
     {
         string effect;
         int duration;
-        private readonly string _name;
 
         public ItemCard()
         {
-            _name = "Item";
         }
 
 
-        public override string name
-        {
-            get { return _name; }
-        }
+        public override string name => "Item";
+
     }
-}
 }
