@@ -10,7 +10,6 @@ namespace API.Hubs
     public class MonstersItemsSpellsHub : Hub
     {
         //Dict gameid -> game
-        Dictionary<int, Game> games = new Dictionary<int, Game>();
         public override Task OnConnectedAsync()
         {
             Console.WriteLine("Connected");
@@ -19,36 +18,29 @@ namespace API.Hubs
 
         public async Task CreateNewGame(string username)
         {
-            int matchId = new Random().Next();
-            while(games.ContainsKey(matchId))
-            {
-                matchId = new Random().Next();
-            }
-            Game game = new Game(matchId);
+            Game game = new Game();
             game.AddPlayer(Clients.Caller, username);
-            games.Add(matchId, game);
-            foreach(int id in games.Keys)
+            Program.RegisterGame(game);
+#if DEBUG
+            foreach(int id in Program.getGameIds())
             {
                 Console.WriteLine("[API] Game id: " + id);
             }
+#endif
             //send
-            await Clients.Caller.SendAsync("ReceiveCode", matchId);
+            await Clients.Caller.SendAsync("ReceiveCode", game.id);
         }
         public async Task JoinGame(int matchId, string username)
         {
-            if(!games.ContainsKey(matchId))
-            {
-                //game doesn't exist
-                await Clients.Caller.SendAsync("ReceiveFailure", 
-                    "Game with this Match ID does not exist.");
-                return;
-            }
             Game game;
-            if (!games.TryGetValue(matchId, out game))
+            try
             {
-                //failure to join game: internal error
-                await Clients.Caller.SendAsync("ReceiveFailure", 
-                    "Server was not able to retrieve an active session");
+                game = Program.GetGame(matchId);
+            }
+            catch(Exception e)
+            {
+                await Clients.Caller.SendAsync("ReceiveFailure",
+                    "Game with such id does not exist");
                 return;
             }
             if (game.AddPlayer(Clients.Caller, username))

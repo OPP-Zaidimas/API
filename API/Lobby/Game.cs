@@ -9,12 +9,24 @@ namespace API.Lobby
     public class Game
     {
         List<Player> players;
-        int id;
+        internal int id;
+        private static HashSet<int> takenIds = new HashSet<int>();
 
-        public Game(int id)
+        private static int NewID()
+        {
+            int returnable;
+
+            while (takenIds.Contains((returnable = Program.rand.Next())));
+
+            takenIds.Add(returnable);
+
+            return returnable;
+        }
+
+        public Game()
         {
             players = new List<Player>();
-            this.id = id;
+            id = NewID();
             Console.WriteLine("[API] New game created with id: " + id);
         }
         public bool AddPlayer(IClientProxy client, string username)
