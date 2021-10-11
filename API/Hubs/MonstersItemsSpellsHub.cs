@@ -20,9 +20,9 @@ namespace API.Hubs
         {
             Game game = new Game();
             game.AddPlayer(Clients.Caller, username);
-            Program.RegisterGame(game);
+            GamesManager.Instance.RegisterGame(game);
 #if DEBUG
-            foreach(int id in Program.getGameIds())
+            foreach(int id in GamesManager.Instance.getGameIds())
             {
                 Console.WriteLine("[API] Game id: " + id);
             }
@@ -35,7 +35,7 @@ namespace API.Hubs
             Game game;
             try
             {
-                game = Program.GetGame(matchId);
+                game = GamesManager.Instance.GetGame(matchId);
             }
             catch(Exception e)
             {

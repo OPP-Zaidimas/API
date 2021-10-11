@@ -12,7 +12,6 @@ namespace API
 {
     public class Program
     {
-        private static Dictionary<int, Game> games = new Dictionary<int, Game>();
         internal static Random rand = new Random();
         public static void Main(string[] args)
         {
@@ -25,23 +24,5 @@ namespace API
                 {
                     webBuilder.UseStartup<Startup>();
                 });
-        public static void RegisterGame(Game g)
-        {
-            games.Add(g.id, g);
-        }
-        public static Game GetGame(int id)
-        {
-            return games[id];
-        }
-        public static void DeleteGame(int id)
-        {
-            games.Remove(id);
-        }
-#if DEBUG
-        public static List<int> getGameIds()
-        {
-            return games.Keys.ToList();
-        }
-#endif
     }
 }
