@@ -7,6 +7,8 @@ namespace API.Hubs
 {
     public class MonstersItemsSpellsHub : Hub
     {
+        private readonly GamesManager _manager = GamesManager.Instance;
+
         //Dict gameid -> game
         public override Task OnConnectedAsync()
         {
@@ -18,9 +20,9 @@ namespace API.Hubs
         {
             var game = new Game();
             game.AddPlayer(Clients.Caller, username);
-            GamesManager.Instance.RegisterGame(game);
+            _manager.RegisterGame(game);
 #if DEBUG
-            foreach (int id in GamesManager.Instance.GetGameIds())
+            foreach (int id in _manager.GetGameIds())
             {
                 Console.WriteLine("[API] Game id: " + id);
             }
@@ -34,7 +36,7 @@ namespace API.Hubs
             Game game;
             try
             {
-                game = GamesManager.Instance.GetGame(matchId);
+                game = _manager.GetGame(matchId);
             }
             catch (Exception)
             {
@@ -70,7 +72,7 @@ namespace API.Hubs
             Game game;
             try
             {
-                game = GamesManager.Instance.GetGame(matchId);
+                game = _manager.GetGame(matchId);
             }
             catch (Exception)
             {
