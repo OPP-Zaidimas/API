@@ -46,5 +46,17 @@ namespace API.Lobby
         {
             return players[id];
         }
+        public Player GetPlayerByUsername(string username)
+        {
+            if (players[0].GetUsername().Equals(username))
+            {
+                return players[0];
+            }
+            else if (players[1].GetUsername().Equals(username))
+            {
+                return players[1];
+            }
+            else return null;
+        }
     }
 }
