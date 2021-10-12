@@ -1,62 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 
 namespace API.Lobby
 {
     public class Game
     {
-        List<Player> players;
-        internal int id;
-        private static HashSet<int> takenIds = new HashSet<int>();
+        readonly List<Player> _players;
+        internal readonly int Id;
+        private static readonly HashSet<int> TakenIds = new();
 
         private static int NewID()
         {
             int returnable;
 
-            while (takenIds.Contains((returnable = Program.rand.Next())));
+            while (TakenIds.Contains(returnable = Program.rand.Next()));
 
-            takenIds.Add(returnable);
+            TakenIds.Add(returnable);
 
             return returnable;
         }
 
         public Game()
         {
-            players = new List<Player>();
-            id = NewID();
-            Console.WriteLine("[API] New game created with id: " + id);
+            _players = new List<Player>();
+            Id = NewID();
+            Console.WriteLine("[API] New game created with id: " + Id);
         }
         public bool AddPlayer(IClientProxy client, string username)
         {
-            if(players.Count > 1)
+            if(_players.Count > 1)
             {
                 return false;
             }
-            else
-            {
-                players.Add(new Player(client, username));
-                Console.WriteLine(String.Format("[API] {0} has joined the game with id {1}", username, id));
-                return true;
-            }
+
+            _players.Add(new Player(client, username));
+            Console.WriteLine($"[API] {username} has joined the game with id {Id}");
+            return true;
         }
         public Player GetPlayer(int id)
         {
-            return players[id];
+            return _players[id];
         }
         public Player GetPlayerByUsername(string username)
         {
-            if (players[0].GetUsername().Equals(username))
+            if (_players[0].GetUsername().Equals(username))
             {
-                return players[0];
+                return _players[0];
             }
-            else if (players[1].GetUsername().Equals(username))
+
+            if (_players[1].GetUsername().Equals(username))
             {
-                return players[1];
+                return _players[1];
             }
-            else return null;
+
+            return null;
         }
     }
 }

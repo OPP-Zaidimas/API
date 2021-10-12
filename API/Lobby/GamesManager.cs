@@ -1,49 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace API.Lobby
 {
     public class GamesManager
     {
-        private Dictionary<int, Game> games;
+        private readonly Dictionary<int, Game> _games;
 
-        public static GamesManager Instance {
-            get 
-            {
-                if(_instance==null)
-                {
-                    _instance = new GamesManager();
-                }
-                return _instance;
-            } 
+        public static GamesManager Instance
+        {
+            get { return _instance ??= new GamesManager(); }
         }
 
         private static GamesManager _instance;
 
         private GamesManager()
         {
-            
-            games = new Dictionary<int, Game>();
+            _games = new Dictionary<int, Game>();
         }
 
         public void RegisterGame(Game g)
         {
-            games.Add(g.id, g);
+            _games.Add(g.Id, g);
         }
+
         public Game GetGame(int id)
         {
-            return games[id];
+            return _games[id];
         }
+
         public void DeleteGame(int id)
         {
-            games.Remove(id);
+            _games.Remove(id);
         }
 #if DEBUG
-        public List<int> getGameIds()
+        public List<int> GetGameIds()
         {
-            return games.Keys.ToList();
+            return _games.Keys.ToList();
         }
 #endif
     }
