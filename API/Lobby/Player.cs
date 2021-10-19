@@ -1,28 +1,46 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 
 namespace API.Lobby
 {
     public class Player
     {
-        private readonly IClientProxy client;
-        private string username;
+        private readonly IClientProxy _client;
+        private readonly string _username;
+        public readonly int[] Cards = new int[5];
 
         public Player(IClientProxy client, string username)
         {
-            this.client = client;
-            this.username = username;
+            _client = client;
+            _username = username;
+            for (int i = 0; i < 5; i++)
+            {
+                Cards[i] = -1;
+            }
         }
+
         public IClientProxy GetClient()
         {
-            return client;
+            return _client;
         }
+
         public string GetUsername()
         {
-            return username;
+            return _username;
+        }
+
+        public bool AddToNearest(int cardId)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                if (Cards[i] != -1) continue;
+
+                Console.WriteLine($"[API] Card with id {cardId} was added to {_username}'s deck.");
+                Cards[i] = cardId;
+                return true;
+            }
+
+            return false;
         }
     }
 }
