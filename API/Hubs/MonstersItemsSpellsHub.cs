@@ -57,6 +57,9 @@ namespace API.Hubs
                  */
                 await player1.GetClient().SendAsync("StartGame", player2.GetUsername(), matchId);
                 await player2.GetClient().SendAsync("StartGame", player1.GetUsername(), matchId);
+                game.ChangeTurn();
+                await game.GetPlayer(0).GetClient().SendAsync("ReceiveEndTurn", game.IsPlayersTurn(game.GetPlayer(0)));
+                await game.GetPlayer(1).GetClient().SendAsync("ReceiveEndTurn", game.IsPlayersTurn(game.GetPlayer(1)));
             }
             else
             {
@@ -64,6 +67,27 @@ namespace API.Hubs
                 await Clients.Caller.SendAsync("ReceiveFailure",
                     "Game is already full and in progress");
             }
+        }
+
+        public async Task EndTurn(int matchId)
+        {
+            //retrieve game
+            Game game;
+            try
+            {
+                game = _manager.GetGame(matchId);
+            }
+            catch (Exception)
+            {
+                await Clients.Caller.SendAsync("ReceiveFailure",
+                    "Game with such id does not exist");
+                return;
+            }
+            //swap the round taker
+            game.ChangeTurn();
+            //send messages to the users
+            await game.GetPlayer(0).GetClient().SendAsync("ReceiveEndTurn",game.IsPlayersTurn(game.GetPlayer(0)));
+            await game.GetPlayer(1).GetClient().SendAsync("ReceiveEndTurn", game.IsPlayersTurn(game.GetPlayer(1)));
         }
 
         public async Task PlaceCard(int matchId, int cardId, string username)
