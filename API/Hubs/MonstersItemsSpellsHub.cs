@@ -2,6 +2,7 @@
 using System;
 using System.Threading.Tasks;
 using API.Lobby;
+using API.Assets;
 
 namespace API.Hubs
 {
@@ -28,7 +29,7 @@ namespace API.Hubs
             }
 #endif
             //send
-            await Clients.Caller.SendAsync("ReceiveCode", game.Id);
+            await Clients.Caller.SendAsync(ClientCall.ReceiveCode, game.Id);
         }
 
         public async Task JoinGame(int matchId, string username)
@@ -40,7 +41,7 @@ namespace API.Hubs
             }
             catch (Exception)
             {
-                await Clients.Caller.SendAsync("ReceiveFailure",
+                await Clients.Caller.SendAsync(ClientCall.ReceiveFailure,
                     "Game with such id does not exist");
                 return;
             }
@@ -55,15 +56,39 @@ namespace API.Hubs
                 /*
                  * @arg1 - opponent name
                  */
-                await player1.GetClient().SendAsync("StartGame", player2.GetUsername(), matchId);
-                await player2.GetClient().SendAsync("StartGame", player1.GetUsername(), matchId);
+                await player1.GetClient().SendAsync(ClientCall.StartGame, player2.GetUsername(), matchId);
+                await player2.GetClient().SendAsync(ClientCall.StartGame, player1.GetUsername(), matchId);
+                game.ChangeTurn();
+                await game.GetPlayer(0).GetClient().SendAsync(ClientCall.ReceiveEndTurn, game.IsPlayersTurn(game.GetPlayer(0)));
+                await game.GetPlayer(1).GetClient().SendAsync(ClientCall.ReceiveEndTurn, game.IsPlayersTurn(game.GetPlayer(1)));
             }
             else
             {
                 //failure to join due to too many players
-                await Clients.Caller.SendAsync("ReceiveFailure",
+                await Clients.Caller.SendAsync(ClientCall.ReceiveFailure,
                     "Game is already full and in progress");
             }
+        }
+
+        public async Task EndTurn(int matchId)
+        {
+            //retrieve game
+            Game game;
+            try
+            {
+                game = _manager.GetGame(matchId);
+            }
+            catch (Exception)
+            {
+                await Clients.Caller.SendAsync(ClientCall.ReceiveFailure,
+                    "Game with such id does not exist");
+                return;
+            }
+            //swap the round taker
+            game.ChangeTurn();
+            //send messages to the users
+            await game.GetPlayer(0).GetClient().SendAsync(ClientCall.ReceiveEndTurn,game.IsPlayersTurn(game.GetPlayer(0)));
+            await game.GetPlayer(1).GetClient().SendAsync(ClientCall.ReceiveEndTurn, game.IsPlayersTurn(game.GetPlayer(1)));
         }
 
         public async Task PlaceCard(int matchId, int cardId, string username)
@@ -76,7 +101,7 @@ namespace API.Hubs
             }
             catch (Exception)
             {
-                await Clients.Caller.SendAsync("ReceiveFailure",
+                await Clients.Caller.SendAsync(ClientCall.ReceiveFailure,
                     "Game with such id does not exist");
                 return;
             }
@@ -88,7 +113,7 @@ namespace API.Hubs
                 //Place card into card deck of a respective player
                 if (!player.AddToNearest(cardId))
                 {
-                    await Clients.Caller.SendAsync("ReceiveFailure",
+                    await Clients.Caller.SendAsync(ClientCall.ReceiveFailure,
                         "Hand is already full");
                     return;
                 }
@@ -96,12 +121,12 @@ namespace API.Hubs
                 //Send back both card decks to players
                 var player1 = game.GetPlayer(0);
                 var player2 = game.GetPlayer(1);
-                await player1.GetClient().SendAsync("ReceiveCardDecks", player1.Cards, player2.Cards);
-                await player2.GetClient().SendAsync("ReceiveCardDecks", player2.Cards, player1.Cards);
+                await player1.GetClient().SendAsync(ClientCall.ReceiveCardDecks, player1.Cards, player2.Cards);
+                await player2.GetClient().SendAsync(ClientCall.ReceiveCardDecks, player2.Cards, player1.Cards);
             }
             else
             {
-                await Clients.Caller.SendAsync("ReceiveFailure",
+                await Clients.Caller.SendAsync(ClientCall.ReceiveFailure,
                     "Something went wrong with username detection");
             }
         }

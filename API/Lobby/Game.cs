@@ -9,6 +9,7 @@ namespace API.Lobby
         readonly List<Player> _players;
         internal readonly int Id;
         private static readonly HashSet<int> TakenIds = new();
+        private Player currentTurn = null;
 
         private static int NewID()
         {
@@ -42,6 +43,23 @@ namespace API.Lobby
         {
             return _players[id];
         }
+
+        public void ChangeTurn()
+        {
+            Console.WriteLine($"[API] A player in game with id {Id} has changed the turn");
+            if(currentTurn == null || currentTurn == _players[1])
+            {
+                currentTurn = _players[0];
+                return;
+            }
+            currentTurn = _players[1];
+        }
+
+        public bool IsPlayersTurn(Player player)
+        {
+            return currentTurn == player;
+        }
+
         public Player GetPlayerByUsername(string username)
         {
             if (_players[0].GetUsername().Equals(username))
