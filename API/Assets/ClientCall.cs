@@ -8,5 +8,6 @@ namespace API.Assets
         public const string StartGame = "StartGame";
         public const string ReceiveEndTurn = "ReceiveEndTurn";
         public const string ReceiveCardDecks = "ReceiveCardDecks";
+        public const string ReceiveHPs = "ReceiveHPs";
     }
 }
