@@ -47,10 +47,11 @@ namespace API.Lobby
         }
         public void AttackOnMonster(int attackerOffense, int defenderId)
         {
-            if(HPs[defenderId] - attackerOffense < 0)
+            if(HPs[defenderId] - attackerOffense <= 0)
             {
                 Cards[defenderId] = -1;
                 HPs[defenderId] = 0;
+                Console.WriteLine($"[API] Card with id {defenderId} was destroyed");
             }
             else
             {
