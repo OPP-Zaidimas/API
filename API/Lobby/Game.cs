@@ -74,5 +74,19 @@ namespace API.Lobby
 
             return null;
         }
+        public Player GetDefender(string attacker)
+        {
+            if (_players[0].GetUsername().Equals(attacker))
+            {
+                return _players[1];
+            }
+
+            if (_players[1].GetUsername().Equals(attacker))
+            {
+                return _players[0];
+            }
+
+            return null;
+        }
     }
 }
