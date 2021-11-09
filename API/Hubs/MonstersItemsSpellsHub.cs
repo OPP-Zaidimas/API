@@ -58,9 +58,18 @@ namespace API.Hubs
                  */
                 await player1.GetClient().SendAsync(ClientCall.StartGame, player2.GetUsername(), matchId);
                 await player2.GetClient().SendAsync(ClientCall.StartGame, player1.GetUsername(), matchId);
+                
                 game.ChangeTurn();
+                
                 await game.GetPlayer(0).GetClient().SendAsync(ClientCall.ReceiveEndTurn, game.IsPlayersTurn(game.GetPlayer(0)));
                 await game.GetPlayer(1).GetClient().SendAsync(ClientCall.ReceiveEndTurn, game.IsPlayersTurn(game.GetPlayer(1)));
+                
+                //send hps
+
+                await game.GetPlayer(0).GetClient().SendAsync(ClientCall.ReceiveHeroHPs, game.GetPlayer(0).CurrentHP, 
+                    game.GetPlayer(0).MaxHP, game.GetPlayer(1).CurrentHP, game.GetPlayer(1).MaxHP);
+                await game.GetPlayer(1).GetClient().SendAsync(ClientCall.ReceiveHeroHPs, game.GetPlayer(1).CurrentHP,
+                    game.GetPlayer(1).MaxHP, game.GetPlayer(0).CurrentHP, game.GetPlayer(0).MaxHP);
             }
             else
             {
@@ -159,6 +168,37 @@ namespace API.Hubs
                 }
                 await player1.GetClient().SendAsync(ClientCall.ReceiveCardDecks, player1.Cards, player1.HPs, player2.Cards, player2.HPs);
                 await player2.GetClient().SendAsync(ClientCall.ReceiveCardDecks, player2.Cards, player2.HPs, player1.Cards, player1.HPs);
+            }
+            else
+            {
+                await Clients.Caller.SendAsync(ClientCall.ReceiveFailure,
+                    "Something went wrong with username detection");
+            }
+        }
+        public async Task AttackOnHero(int matchId, string username, int attackerOffense)
+        {
+            //Retrieve game
+            Game game;
+            try
+            {
+                game = _manager.GetGame(matchId);
+            }
+            catch (Exception)
+            {
+                await Clients.Caller.SendAsync(ClientCall.ReceiveFailure,
+                    "Game with such id does not exist");
+                return;
+            }
+
+            //Get player by username
+            var player = game.GetPlayerByUsername(username);
+            if (player != null)
+            {
+                player.AttackOnHero(attackerOffense);
+                await game.GetPlayer(0).GetClient().SendAsync(ClientCall.ReceiveHeroHPs, game.GetPlayer(0).CurrentHP,
+                    game.GetPlayer(0).MaxHP, game.GetPlayer(1).CurrentHP, game.GetPlayer(1).MaxHP);
+                await game.GetPlayer(1).GetClient().SendAsync(ClientCall.ReceiveHeroHPs, game.GetPlayer(1).CurrentHP,
+                    game.GetPlayer(1).MaxHP, game.GetPlayer(0).CurrentHP, game.GetPlayer(0).MaxHP);
             }
             else
             {

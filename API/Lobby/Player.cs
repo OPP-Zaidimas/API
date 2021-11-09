@@ -9,6 +9,8 @@ namespace API.Lobby
         private readonly string _username;
         public int[] Cards = new int[5];
         public int[] HPs = new int[5];
+        public int MaxHP = 20;
+        public int CurrentHP = 20;
 
         public Player(IClientProxy client, string username)
         {
@@ -57,6 +59,16 @@ namespace API.Lobby
             {
                 HPs[defenderId] -= attackerOffense;
             }
+        }
+        public void AttackOnHero(int attackerOffense)
+        {
+            if(CurrentHP - attackerOffense <= 0)
+            {
+                CurrentHP = 0;
+                Console.WriteLine($"{_username} has been defeated.");
+                return;
+            }
+            CurrentHP -= attackerOffense;
         }
     }
 }
