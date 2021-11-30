@@ -11,6 +11,8 @@ namespace API.Lobby
         public int[] HPs = new int[5];
         public int MaxHP = 20;
         public int CurrentHP = 20;
+        public string State { get; set; }
+        private PlayerStateHandler _stateHandler;
 
         public Player(IClientProxy client, string username)
         {
@@ -21,6 +23,14 @@ namespace API.Lobby
                 Cards[i] = -1;
                 HPs[i] = 0;
             }
+            _stateHandler = new WaitingHandler();
+            _stateHandler.Handle(this);
+        }
+
+        public void SwapHandlers(PlayerStateHandler handler)
+        {
+            _stateHandler = handler;
+            _stateHandler.Handle(this);
         }
 
         public IClientProxy GetClient()

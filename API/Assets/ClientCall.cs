@@ -10,5 +10,6 @@ namespace API.Assets
         public const string ReceiveCardDecks = "ReceiveCardDecks";
         public const string ReceiveHPs = "ReceiveHPs";
         public const string ReceiveHeroHPs = "ReceiveHeroHPs";
+        public const string ReceivePlayerState = "ReceivePlayerState";
     }
 }
