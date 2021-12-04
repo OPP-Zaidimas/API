@@ -11,7 +11,7 @@ namespace API.Lobby
         public int[] HPs = new int[5];
         public int MaxHP = 20;
         public int CurrentHP = 20;
-        public string State { get; set; }
+        public States State { get; set; }
         private PlayerStateHandler _stateHandler;
 
         public Player(IClientProxy client, string username)

@@ -9,7 +9,7 @@ namespace API.Lobby
     {
         public void Handle(Player player)
         {
-            player.State = "Your turn";
+            player.State = States.ATTACKING;
         }
     }
 }

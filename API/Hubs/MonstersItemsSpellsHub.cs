@@ -63,8 +63,8 @@ namespace API.Hubs
                 
                 await game.GetPlayer(0).GetClient().SendAsync(ClientCall.ReceiveEndTurn, game.IsPlayersTurn(game.GetPlayer(0)));
                 await game.GetPlayer(1).GetClient().SendAsync(ClientCall.ReceiveEndTurn, game.IsPlayersTurn(game.GetPlayer(1)));
-                await game.GetPlayer(0).GetClient().SendAsync(ClientCall.ReceivePlayerState, game.GetPlayer(0).State);
-                await game.GetPlayer(1).GetClient().SendAsync(ClientCall.ReceivePlayerState, game.GetPlayer(1).State);
+                await game.GetPlayer(0).GetClient().SendAsync(ClientCall.ReceivePlayerState, (uint) game.GetPlayer(0).State);
+                await game.GetPlayer(1).GetClient().SendAsync(ClientCall.ReceivePlayerState, (uint) game.GetPlayer(1).State);
                 //send hps
 
                 await game.GetPlayer(0).GetClient().SendAsync(ClientCall.ReceiveHeroHPs, game.GetPlayer(0).CurrentHP, 
@@ -99,8 +99,8 @@ namespace API.Hubs
             //send messages to the users
             await game.GetPlayer(0).GetClient().SendAsync(ClientCall.ReceiveEndTurn,game.IsPlayersTurn(game.GetPlayer(0)));
             await game.GetPlayer(1).GetClient().SendAsync(ClientCall.ReceiveEndTurn, game.IsPlayersTurn(game.GetPlayer(1)));
-            await game.GetPlayer(0).GetClient().SendAsync(ClientCall.ReceivePlayerState, game.GetPlayer(0).State);
-            await game.GetPlayer(1).GetClient().SendAsync(ClientCall.ReceivePlayerState, game.GetPlayer(1).State);
+            await game.GetPlayer(0).GetClient().SendAsync(ClientCall.ReceivePlayerState, (uint)game.GetPlayer(0).State);
+            await game.GetPlayer(1).GetClient().SendAsync(ClientCall.ReceivePlayerState, (uint)game.GetPlayer(1).State);
         }
 
         public async Task MonsterAttack(int matchId, string attackerName, int attackerId, int attackerOffense, int deffenderId, int deffenderHp)
