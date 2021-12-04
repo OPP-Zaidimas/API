@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using API.Lobby.StateHandlers;
 using Microsoft.AspNetCore.SignalR;
 
 namespace API.Lobby
@@ -50,9 +51,13 @@ namespace API.Lobby
             if(currentTurn == null || currentTurn == _players[1])
             {
                 currentTurn = _players[0];
+                _players[0].SwapHandlers(new AttackingHandler());
+                _players[1].SwapHandlers(new DefendingHandler());
                 return;
             }
             currentTurn = _players[1];
+            _players[1].SwapHandlers(new AttackingHandler());
+            _players[0].SwapHandlers(new DefendingHandler());
         }
 
         public bool IsPlayersTurn(Player player)

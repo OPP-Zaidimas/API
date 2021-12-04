@@ -1,4 +1,5 @@
 ﻿using System;
+using API.Lobby.StateHandlers;
 using Microsoft.AspNetCore.SignalR;
 
 namespace API.Lobby
@@ -11,6 +12,8 @@ namespace API.Lobby
         public int[] HPs = new int[5];
         public int MaxHP = 20;
         public int CurrentHP = 20;
+        public States State { get; set; }
+        private IPlayerStateHandler _stateHandler;
 
         public Player(IClientProxy client, string username)
         {
@@ -21,6 +24,14 @@ namespace API.Lobby
                 Cards[i] = -1;
                 HPs[i] = 0;
             }
+            _stateHandler = new WaitingHandler();
+            _stateHandler.Handle(this);
+        }
+
+        public void SwapHandlers(IPlayerStateHandler handler)
+        {
+            _stateHandler = handler;
+            _stateHandler.Handle(this);
         }
 
         public IClientProxy GetClient()
