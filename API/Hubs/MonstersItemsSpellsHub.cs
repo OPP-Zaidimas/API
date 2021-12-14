@@ -198,6 +198,10 @@ namespace API.Hubs
             if (player != null)
             {
                 player.AttackOnHero(attackerOffense);
+                if (game.GetPlayer(0).CurrentHP <= 0 || game.GetPlayer(1).CurrentHP <= 0)
+                {
+                    game.PrintHistory();
+                }
                 await game.GetPlayer(0).GetClient().SendAsync(ClientCall.ReceiveHeroHPs, game.GetPlayer(0).CurrentHP,
                     game.GetPlayer(0).MaxHP, game.GetPlayer(1).CurrentHP, game.GetPlayer(1).MaxHP);
                 await game.GetPlayer(1).GetClient().SendAsync(ClientCall.ReceiveHeroHPs, game.GetPlayer(1).CurrentHP,
