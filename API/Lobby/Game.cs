@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using API.Lobby.MatchHistoryMemento;
 using API.Lobby.StateHandlers;
 using Microsoft.AspNetCore.SignalR;
 
@@ -11,6 +12,8 @@ namespace API.Lobby
         internal readonly int Id;
         private static readonly HashSet<int> TakenIds = new();
         private Player currentTurn = null;
+        private IMemento currentState;
+        public MatchHistory matchHistory;
 
         private static int NewID()
         {
@@ -27,6 +30,7 @@ namespace API.Lobby
         {
             _players = new List<Player>();
             Id = NewID();
+            matchHistory = new MatchHistory();
             Console.WriteLine("[API] New game created with id: " + Id);
         }
         public bool AddPlayer(IClientProxy client, string username)
@@ -45,9 +49,44 @@ namespace API.Lobby
             return _players[id];
         }
 
+        public void StoreState()
+        {
+            currentState = new MatchHistoryEntry(_players[0].CurrentHP, _players[1].CurrentHP, _players[0].HPs, _players[1].HPs);
+            matchHistory.AddMemento(currentState);
+        }
+
+        public MatchHistoryEntry decipherMemento(IMemento memento)
+        {
+            MatchHistoryEntry _entry = (MatchHistoryEntry)memento.getState();
+            return _entry;
+        }
+
+        public void PrintHistory()
+        {
+            Console.WriteLine("Printing match history " + Id);
+            for(int i = 0; i < matchHistory.GetLength(); i++)
+            {
+                MatchHistoryEntry entry = decipherMemento(matchHistory.GetEntry(i));
+                Console.WriteLine($"TURN {i+1}:");
+                Console.WriteLine($"Player {_players[0].GetUsername()}'s HP: {entry.Player1HP}");
+                Console.WriteLine("Cards state:");
+                for(int j = 0; j < entry.Player1CardHPs.Length; j++)
+                {
+                    Console.WriteLine($"Card {j+1}: {entry.Player1CardHPs[j]}");
+                }
+                Console.WriteLine($"Player {_players[1].GetUsername()}'s HP: {entry.Player2HP}");
+                Console.WriteLine("Cards state:");
+                for (int j = 0; j < entry.Player2CardHPs.Length; j++)
+                {
+                    Console.WriteLine($"Card {j + 1}: {entry.Player2CardHPs[j]}");
+                }
+            }
+        }
+
         public void ChangeTurn()
         {
             Console.WriteLine($"[API] A player in game with id {Id} has changed the turn");
+            StoreState();
             if(currentTurn == null || currentTurn == _players[1])
             {
                 currentTurn = _players[0];
